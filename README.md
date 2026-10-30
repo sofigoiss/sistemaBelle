@@ -57,3 +57,13 @@ Clicar no link/botão para iniciar conversa direta via WhatsApp/redes com o prod
 Moderar conteúdos ou denúncias de publicações impróprias.
 
 Gerenciar categorias de produtos do sistema.
+
+Status do Projeto
+
+[x] Entrega 1: Estrutura inicial do projeto, documentação e organização do repositório.
+
+[x] Entrega 2: Modelagem do banco de dados relacional (MySQL), encriptação de senhas com bcryptjs e autenticação via tokens JWT.
+
+[ ] Entrega 3: Desenvolvimento do CRUD completo das publicações e integração do Front-end via Fetch/DOM.
+
+[ ] Entrega 4: Finalização do projeto e apresentação.
