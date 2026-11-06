@@ -64,6 +64,6 @@ Status do Projeto
 
 [x] Entrega 2: Modelagem do banco de dados relacional (MySQL), encriptação de senhas com bcryptjs e autenticação via tokens JWT.
 
-[ ] Entrega 3: Desenvolvimento do CRUD completo das publicações e integração do Front-end via Fetch/DOM.
+[x] Entrega 3: Desenvolvimento do CRUD completo das publicações e integração do Front-end via Fetch/DOM.
 
 [ ] Entrega 4: Finalização do projeto e apresentação.
