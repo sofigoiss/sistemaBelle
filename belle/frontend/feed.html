@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Belle - Feed 🌸</title>
+    <style>
+        body {
+            background-color: #fdf8fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .header-topo {
+            background: linear-gradient(135deg, #a83279, #d946ef);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(168, 50, 121, 0.2);
+        }
+        .header-topo h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .menu-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+        .menu-links a:hover {
+            opacity: 0.8;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .card-publicacao {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            border: 1px solid #f3e8ff;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #d946ef;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 12px;
+            object-fit: cover;
+        }
+        .autor-info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #1e293b;
+        }
+        .autor-info span {
+            font-size: 13px;
+            color: #64748b;
+        }
+        .conteudo-post h2 {
+            font-size: 18px;
+            color: #a83279;
+            margin: 10px 0;
+        }
+        .conteudo-post p {
+            color: #475569;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+        .preco {
+            font-weight: bold;
+            color: #10b981;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .imagem-produto {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+        .sem-publicacoes {
+            text-align: center;
+            color: #64748b;
+            padding: 40px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-topo">
+        <h1>Sistema Belle 🌸</h1>
+        <div class="menu-links">
+            <a href="perfil.html?id=1">Meu Perfil</a>
+            <a href="editar-perfil.html">Editar Perfil</a>
+        </div>
+    </div>
+
+    <div class="container" id="feed-container">
+        <p class="sem-publicacoes">A carregar publicações...</p>
+    </div>
+
+    <script>
+        async function carregarFeed() {
+            const feedContainer = document.getElementById('feed-container');
+
+            try {
+                // Tenta buscar as publicações da tua API backend
+                const resposta = await fetch('http://localhost:3000/api/publicacoes');
+                
+                if (resposta.ok) {
+                    const publicacoes = await resposta.json();
+
+                    if (publicacoes.length === 0) {
+                        feedContainer.innerHTML = '<p class="sem-publicacoes">Ainda não há publicações no feed. Sê o primeiro a partilhar! ✨</p>';
+                        return;
+                    }
+
+                    feedContainer.innerHTML = '';
+                    publicacoes.forEach(pub => {
+                        const card = document.createElement('div');
+                        card.className = 'card-publicacao';
+                        
+                        card.innerHTML = `
+                            <div class="card-header">
+                                <div class="avatar">${pub.nome ? pub.nome.charAt(0).toUpperCase() : 'U'}</div>
+                                <div class="autor-info">
+                                    <h3>${pub.nome || 'Produtor Local'}</h3>
+                                    <span>${pub.categoria || 'Artesanal'}</span>
+                                </div>
+                            </div>
+                            <div class="conteudo-post">
+                                <h2>${pub.titulo}</h2>
+                                <p>${pub.descricao}</p>
+                                ${pub.preco ? `<div class="preco">R$ ${Number(pub.preco).toFixed(2)}</div>` : ''}
+                                ${pub.imagem_url ? `<img src="${pub.imagem_url}" class="imagem-produto" alt="${pub.titulo}">` : ''}
+                            </div>
+                        `;
+                        feedContainer.appendChild(card);
+                    });
+                } else {
+                    feedContainer.innerHTML = '<p class="sem-publicacoes">Erro ao carregar o feed do servidor.</p>';
+                }
+            } catch (erro) {
+                console.error('Erro de conexão:', erro);
+                feedContainer.innerHTML = '<p class="sem-publicacoes">Não foi possível ligar ao servidor backend na porta 3000.</p>';
+            }
+        }
+
+        carregarFeed();
+    </script>
+    <script src="feed.js"></script>
+</body>
+</html>

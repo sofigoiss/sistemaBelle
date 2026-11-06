@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Belle - Perfil do Produtor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="brand">
+                <h1>Sistema Belle 🌸</h1>
+                <p>Rede de Apoio Local</p>
+            </div>
+            <div>
+                <a href="index.html" class="btn-login-link">← Voltar ao Feed</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <!-- Cartão Principal do Perfil -->
+        <section class="profile-card">
+            <div class="profile-banner"></div>
+            <div class="profile-info-wrapper">
+                <div class="profile-avatar" id="profile-avatar">S</div>
+                <div class="profile-details">
+                    <div class="profile-title-group">
+                        <h2 id="perfil-nome">A carregar perfil...</h2>
+                        <span id="perfil-badge" class="user-badge">Trabalhador</span>
+                    </div>
+                    <p id="perfil-subtitulo" class="profile-bio">Produtor Local no Sistema Belle</p>
+                    
+                    <!-- Estatísticas do Perfil -->
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-count">0</span>
+                            <span class="stat-label">Produtos</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-type">Artesanal</span>
+                            <span class="stat-label">Categoria</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feed de Publicações do Perfil -->
+        <section class="feed-section" style="margin-top: 30px;">
+            <div class="feed-header-bar">
+                <h3 id="feed-titulo-perfil" style="color: #1e293b; font-size: 1.3rem;">Vitrina de Produtos</h3>
+            </div>
+            
+            <div id="perfil-feed-container" class="feed-grid">
+                <!-- Publicações do utilizador -->
+            </div>
+        </section>
+    </main>
+
+    <script src="perfil.js"></script>
+</body>
+</html>

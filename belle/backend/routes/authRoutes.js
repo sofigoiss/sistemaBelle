@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { registrar, login } = require('../controllers/authController');
+const authController = require('../controllers/authController');
 
-// Rota de Registo: POST /api/auth/registrar
-router.post('/registrar', registrar);
-
-// Rota de Login: POST /api/auth/login
-router.post('/login', login);
+// Apenas rotas de autenticação
+router.post('/login', authController.login);
+router.post('/registrar', authController.registrar);
 
 module.exports = router;

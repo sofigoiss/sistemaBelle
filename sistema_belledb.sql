@@ -1,6 +1,8 @@
 CREATE DATABASE  sistema_belle;
 USE sistema_belle;
 
+ALTER TABLE usuarios ADD COLUMN foto_perfil VARCHAR(255);
+
 -- Tabela de Usuários (com suporte a diferentes perfis de acesso)
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,

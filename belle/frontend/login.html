@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Belle - Entrar / Registar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Sistema Belle 🌸</h1>
+            <p>Conecte-se à nossa comunidade local</p>
+        </div>
+
+        <!-- Abas para alternar entre Login e Registo -->
+        <div class="auth-tabs">
+            <button id="tab-login" class="tab-btn active" onclick="mudarAba('login')">Entrar</button>
+            <button id="tab-register" class="tab-btn" onclick="mudarAba('register')">Registar</button>
+        </div>
+
+        <!-- Formulário de Login -->
+        <form id="form-login" class="auth-form">
+            <div class="input-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="exemplo@email.com" required>
+            </div>
+            <div class="input-group">
+                <label for="login-senha">Senha</label>
+                <input type="password" id="login-senha" placeholder="******" required>
+            </div>
+            <button type="submit" class="btn-primary">Entrar</button>
+        </form>
+
+        <!-- Formulário de Registo -->
+        <form id="form-register" class="auth-form hidden">
+            <div class="input-group">
+                <label for="reg-nome">Nome / Nome do Negócio</label>
+                <input type="text" id="reg-nome" placeholder="Sofi Artesã" required>
+            </div>
+            <div class="input-group">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" placeholder="exemplo@email.com" required>
+            </div>
+            <div class="input-group">
+                <label for="reg-senha">Senha</label>
+                <input type="password" id="reg-senha" placeholder="******" required>
+            </div>
+            <div class="input-group">
+                <label for="reg-tipo">Tipo de Utilizador</label>
+                <select id="reg-tipo">
+                    <option value="trabalhador">Trabalhador / Produtor (Criar publicações)</option>
+                    <option value="cliente">Cliente / Visitante (Apenas ver feed)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">Criar Conta</button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="index.html">← Voltar para o Feed</a>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>
