@@ -154,3 +154,72 @@ async function editarPublicacao(id, tituloAtual, precoAtual, descricaoAtual, ima
         alert('Erro ao conectar com o servidor.');
     }
 }
+// Função para carregar e exibir os comentários de uma publicação específica
+async function carregarComentarios(publicacaoId) {
+    try {
+        const resposta = await fetch(`http://localhost:3000/api/publicacoes/${publicacaoId}/comentarios`);
+        if (resposta.ok) {
+            const comentarios = await resposta.json();
+            const container = document.getElementById(`lista-comentarios-${publicacaoId}`);
+            
+            if (container) {
+                container.innerHTML = ''; // Limpa a lista antes de renderizar
+                
+                if (comentarios.length === 0) {
+                    container.innerHTML = '<p class="sem-comentarios" style="font-size: 0.9rem; color: #888;">Ainda sem comentários. Sê o primeiro a comentar! 🌸</p>';
+                    return;
+                }
+
+                comentarios.forEach(c => {
+                    const item = document.createElement('div');
+                    item.className = 'comentario-item';
+                    item.style.margin = '8px 0';
+                    item.style.padding = '8px';
+                    item.style.background = '#f9f9f9';
+                    item.style.borderRadius = '6px';
+                    
+                    item.innerHTML = `
+                        <strong style="font-size: 0.9rem; color: #333;">${c.nome || 'Utilizador'}</strong>
+                        <p style="margin: 4px 0 0 0; font-size: 0.9rem; color: #555;">${c.texto}</p>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+        }
+    } catch (erro) {
+        console.error('Erro ao carregar comentários:', erro);
+    }
+}
+
+// Função para enviar um novo comentário
+async function enviarComentario(evento, publicacaoId) {
+    evento.preventDefault(); // Evita que a página recarregue
+    
+    const input = document.getElementById(`input-comentario-${publicacaoId}`);
+    const texto = input.value.trim();
+
+    if (!texto) return;
+
+    try {
+        const resposta = await fetch(`http://localhost:3000/api/publicacoes/${publicacaoId}/comentarios`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                texto: texto,
+                usuario_id: 3 // ID predefinido para testes livres
+            })
+        });
+
+        if (resposta.ok) {
+            input.value = ''; // Limpa o campo de texto
+            carregarComentarios(publicacaoId); // Atualiza a lista de comentários instantaneamente
+        } else {
+            alert('Erro ao enviar o comentário.');
+        }
+    } catch (erro) {
+        console.error('Erro de conexão:', erro);
+        alert('Erro de conexão com o servidor.');
+    }
+}

@@ -105,6 +105,67 @@
             padding: 40px;
             font-size: 16px;
         }
+
+        /* Estilos da secção de comentários */
+        .secao-comentarios {
+            margin-top: 20px;
+            border-top: 1px solid #f3e8ff;
+            padding-top: 15px;
+        }
+        .secao-comentarios h4 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+            color: #a83279;
+        }
+        .lista-comentarios {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+        .comentario-item {
+            background: #fdf8fb;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #fae8ff;
+        }
+        .comentario-item strong {
+            font-size: 13px;
+            color: #a83279;
+        }
+        .comentario-item p {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            color: #475569;
+        }
+        .form-comentario {
+            display: flex;
+            gap: 8px;
+        }
+        .form-comentario input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+        }
+        .form-comentario input:focus {
+            border-color: #d946ef;
+        }
+        .form-comentario button {
+            background: #a83279;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .form-comentario button:hover {
+            background: #8b2563;
+        }
     </style>
 </head>
 <body>
@@ -126,7 +187,6 @@
             const feedContainer = document.getElementById('feed-container');
 
             try {
-                // Tenta buscar as publicações da tua API backend
                 const resposta = await fetch('http://localhost:3000/api/publicacoes');
                 
                 if (resposta.ok) {
@@ -156,8 +216,23 @@
                                 ${pub.preco ? `<div class="preco">R$ ${Number(pub.preco).toFixed(2)}</div>` : ''}
                                 ${pub.imagem_url ? `<img src="${pub.imagem_url}" class="imagem-produto" alt="${pub.titulo}">` : ''}
                             </div>
+
+                            <!-- Secção de Comentários Integrada -->
+                            <div class="secao-comentarios">
+                                <h4>Comentários 🌸</h4>
+                                <div id="lista-comentarios-${pub.id}" class="lista-comentarios">
+                                    <p style="font-size: 12px; color: #888;">A carregar comentários...</p>
+                                </div>
+                                <form class="form-comentario" onsubmit="enviarComentario(event, ${pub.id})">
+                                    <input type="text" id="input-comentario-${pub.id}" placeholder="Escreve um comentário..." required autocomplete="off">
+                                    <button type="submit">Comentar</button>
+                                </form>
+                            </div>
                         `;
                         feedContainer.appendChild(card);
+
+                        // Carrega os comentários desta publicação logo após criar o card
+                        carregarComentarios(pub.id);
                     });
                 } else {
                     feedContainer.innerHTML = '<p class="sem-publicacoes">Erro ao carregar o feed do servidor.</p>';
@@ -168,8 +243,72 @@
             }
         }
 
+        // Função para buscar e listar os comentários de uma publicação
+        async function carregarComentarios(publicacaoId) {
+            try {
+                const resposta = await fetch(`http://localhost:3000/api/publicacoes/${publicacaoId}/comentarios`);
+                if (resposta.ok) {
+                    const comentarios = await resposta.json();
+                    const container = document.getElementById(`lista-comentarios-${publicacaoId}`);
+                    
+                    if (container) {
+                        container.innerHTML = '';
+                        
+                        if (comentarios.length === 0) {
+                            container.innerHTML = '<p style="font-size: 12px; color: #888; margin: 0;">Ainda sem comentários. Sê o primeiro!</p>';
+                            return;
+                        }
+
+                        comentarios.forEach(c => {
+                            const item = document.createElement('div');
+                            item.className = 'comentario-item';
+                            item.innerHTML = `
+                                <strong>${c.nome || 'Utilizador'}</strong>
+                                <p>${c.texto}</p>
+                            `;
+                            container.appendChild(item);
+                        });
+                    }
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar comentários:', erro);
+            }
+        }
+
+        // Função para enviar um novo comentário
+        async function enviarComentario(evento, publicacaoId) {
+            evento.preventDefault();
+            
+            const input = document.getElementById(`input-comentario-${publicacaoId}`);
+            const texto = input.value.trim();
+
+            if (!texto) return;
+
+            try {
+                const resposta = await fetch(`http://localhost:3000/api/publicacoes/${publicacaoId}/comentarios`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        texto: texto,
+                        usuario_id: 3 // ID fixo para testes livres
+                    })
+                });
+
+                if (resposta.ok) {
+                    input.value = ''; // Limpa o input
+                    carregarComentarios(publicacaoId); // Atualiza a lista instantaneamente
+                } else {
+                    alert('Erro ao enviar o comentário.');
+                }
+            } catch (erro) {
+                console.error('Erro de conexão:', erro);
+                alert('Erro de conexão com o servidor.');
+            }
+        }
+
         carregarFeed();
     </script>
-    <script src="feed.js"></script>
 </body>
 </html>

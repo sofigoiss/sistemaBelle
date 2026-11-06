@@ -4,7 +4,7 @@ const db = require('../database/conexao');
 const listarPublicacoes = async (req, res) => {
     try {
         const [linhas] = await db.query(`
-            SELECT p.*, u.nome, u.foto_perfil 
+            SELECT p.*, u.nome 
             FROM publicacoes p
             LEFT JOIN usuarios u ON p.usuario_id = u.id
             ORDER BY p.id DESC
@@ -25,8 +25,6 @@ const listarPublicacoes = async (req, res) => {
 const criarPublicacao = async (req, res) => {
     try {
         const { usuario_id, titulo, preco, imagem_url, descricao } = req.body;
-        
-        // Se o usuario_id vier vazio, força o número 3 por predefinição
         const idUsuario = usuario_id || 3; 
 
         await db.query(
@@ -71,9 +69,52 @@ const apagarPublicacao = async (req, res) => {
     }
 };
 
+// Listar comentários de uma publicação
+const listarComentarios = async (req, res) => {
+    try {
+        const { publicacao_id } = req.params;
+        const [linhas] = await db.query(`
+            SELECT c.*, u.nome 
+            FROM comentarios c
+            LEFT JOIN usuarios u ON c.usuario_id = u.id
+            WHERE c.publicacao_id = ?
+            ORDER BY c.id ASC
+        `, [publicacao_id]);
+        res.json(linhas);
+    } catch (erro) {
+        console.error('Erro ao listar comentários:', erro);
+        res.status(500).json({ erro: 'Erro interno ao carregar comentários.' });
+    }
+};
+
+// Criar um comentário
+const criarComentario = async (req, res) => {
+    try {
+        const { publicacao_id } = req.params;
+        const { texto, usuario_id } = req.body;
+        const idUsuario = usuario_id || 3;
+
+        if (!texto) {
+            return res.status(400).json({ erro: 'O comentário não pode estar vazio.' });
+        }
+
+        await db.query(
+            'INSERT INTO comentarios (publicacao_id, usuario_id, texto) VALUES (?, ?, ?)',
+            [publicacao_id, idUsuario, texto]
+        );
+
+        res.status(201).json({ mensagem: 'Comentário adicionado com sucesso! 🌸' });
+    } catch (erro) {
+        console.error('Erro ao criar comentário:', erro);
+        res.status(500).json({ erro: 'Erro interno ao criar comentário.' });
+    }
+};
+
 module.exports = {
     criarPublicacao,
     listarPublicacoes,
     atualizarPublicacao,
-    apagarPublicacao
+    apagarPublicacao,
+    listarComentarios,
+    criarComentario
 };

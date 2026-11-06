@@ -1,16 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    criarPublicacao, 
-    listarPublicacoes, 
-    atualizarPublicacao, 
-    apagarPublicacao 
-} = require('../controllers/publicacaoController');
+const publicacaoController = require('../controllers/publicacaoController');
 
-// Rotas públicas / Livres para testes do Feed
-router.get('/', listarPublicacoes); // Listar todas as publicações
-router.post('/', criarPublicacao);   // Criar post (sem token para testes)
-router.put('/:id', atualizarPublicacao); // Atualizar post
-router.delete('/:id', apagarPublicacao); // Apagar post
+// Exemplo das rotas que deves ter lá dentro:
+router.get('/', publicacaoController.listarPublicacoes);
+router.post('/', publicacaoController.criarPublicacao);
+
+// Rotas de comentários
+router.get('/:publicacao_id/comentarios', publicacaoController.listarComentarios);
+router.post('/:publicacao_id/comentarios', publicacaoController.criarComentario);
 
 module.exports = router;
