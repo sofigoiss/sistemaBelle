@@ -202,7 +202,6 @@ function atualizarInterfaceUsuario() {
                     <span class="user-name">${usuarioLogado.nome}</span>
                     <span class="user-badge">${usuarioLogado.tipo_usuario}</span>
                 </div>
-                <a href="editar-perfil.html" class="btn-logout" style="text-decoration:none;">Editar</a>
                 <button class="btn-logout" onclick="fazerLogout()">Sair</button>
             </div>
         `;

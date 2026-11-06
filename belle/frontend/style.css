@@ -449,3 +449,136 @@ body {
         margin-top: -45px;
     }
 }
+/* --- Estilos da Página de Login / Registo --- */
+
+/* Fundo geral e centralização do formulário */
+body.auth-body {
+    background-color: #fcf8fc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Contentor principal do formulário (Card) */
+.auth-container {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(168, 85, 145, 0.12);
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+}
+
+/* Cabeçalho do formulário (Título e Subtítulo) */
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header h1 {
+    color: #8b2f70;
+    font-size: 26px;
+    margin-bottom: 6px;
+}
+
+.auth-header p {
+    color: #666666;
+    font-size: 14px;
+}
+
+/* Abas de alternância Entrar / Registar (caso usasses botões separados) */
+.auth-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.auth-tabs button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #f0e6ee;
+    color: #8b2f70;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.auth-tabs button.active {
+    background: #a85591;
+    color: #ffffff;
+}
+
+/* Grupos de inputs */
+.input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a4a4a;
+    margin-bottom: 6px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dcd1da;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #faf5f9;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #a85591;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(168, 85, 145, 0.15);
+}
+
+/* Botão de submissão principal */
+.btn-primary-auth {
+    width: 100%;
+    padding: 12px;
+    background-color: #a85591;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.btn-primary-auth:hover {
+    background-color: #8b2f70;
+}
+
+/* Link secundário (Voltar para o Feed) */
+.auth-footer-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.auth-footer-link a {
+    color: #a85591;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.auth-footer-link a:hover {
+    text-decoration: underline;
+}
