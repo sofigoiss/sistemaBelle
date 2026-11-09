@@ -202,6 +202,7 @@ function atualizarInterfaceUsuario() {
                     <span class="user-name">${usuarioLogado.nome}</span>
                     <span class="user-badge">${usuarioLogado.tipo_usuario}</span>
                 </div>
+                <button onclick="window.location.href='feed.html'" class="btn-feed" style="cursor: pointer; padding: 6px 12px; background-color: #d4a5c9; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; margin-right: 5px;">Feed</button>
                 <button class="btn-logout" onclick="fazerLogout()">Sair</button>
             </div>
         `;
