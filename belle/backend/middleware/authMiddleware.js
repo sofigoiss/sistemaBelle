@@ -1,21 +1,31 @@
 const jwt = require('jsonwebtoken');
 
-const verificarToken = (req, res, next) => {
+function verificarToken(req, res, next) {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Formato: "Bearer TOKEN"
-
-    if (!token) {
+    
+    if (!authHeader) {
         return res.status(401).json({ erro: 'Acesso negado. Token não fornecido.' });
     }
 
-    try {
-        const segredo = process.env.JWT_SECRET || 'chave_secreta_padrao';
-        const decodificado = jwt.verify(token, segredo);
-        req.usuario = decodificado; // Guarda os dados do utilizador na requisição
-        next();
-    } catch (erro) {
-        return res.status(403).json({ erro: 'Token inválido ou expirado.' });
+    const token = authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ erro: 'Token mal formatado.' });
     }
-};
+
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+        return res.status(500).json({ erro: 'Erro interno de configuração de segurança do servidor.' });
+    }
+
+    jwt.verify(token, secret, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ erro: 'Token inválido ou expirado.' });
+        }
+        
+        req.usuario = decoded;
+        next();
+    });
+}
 
 module.exports = verificarToken;
