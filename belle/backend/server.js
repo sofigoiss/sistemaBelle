@@ -1,6 +1,7 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
 
 // Importar as rotas do sistema
 const authRoutes = require('./routes/authRoutes');

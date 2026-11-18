@@ -51,9 +51,10 @@ const login = async (req, res) => {
             return res.status(401).json({ erro: 'Credenciais inválidas.' });
         }
 
+        const segredo = process.env.JWT_SECRET || 'chave_secreta_padrao';
         const token = jwt.sign(
             { id: usuario.id, nome: usuario.nome, tipo_usuario: usuario.tipo_usuario },
-            process.env.JWT_SECRET || 'chave_secreta_padrao',
+            segredo,
             { expiresIn: '24h' }
         );
 

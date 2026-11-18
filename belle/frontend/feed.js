@@ -1,15 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     carregarPublicacoes();
 
-    const dados = {
-    titulo: tituloInput.value,
-    preco: precoInput.value,
-    imagem_url: imagemInput.value,
-    descricao: descricaoInput.value,
-    usuario_id: 1
-};
-
-    // Captura o formulário de publicação (ajusta o ID se necessário no teu HTML)
+    // Captura o formulário de publicação
     const formPublicacao = document.getElementById('formPublicacao') || document.querySelector('form');
     if (formPublicacao) {
         formPublicacao.addEventListener('submit', criarPublicacao);
@@ -68,16 +60,22 @@ async function criarPublicacao(e) {
         titulo: tituloInput ? tituloInput.value : '',
         preco: precoInput ? precoInput.value : 0,
         imagem_url: imagemInput ? imagemInput.value : '',
-        descricao: descricaoInput ? descricaoInput.value : '',
-        usuario_id: 1 // ID estático para testes livres sem dependência de login
+        descricao: descricaoInput ? descricaoInput.value : ''
     };
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('Faça login antes de criar uma publicação.');
+        window.location.href = 'login.html';
+        return;
+    }
 
     try {
         const resposta = await fetch('http://localhost:3000/api/publicacoes', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
-                // Sem cabeçalho de Authorization para evitar bloqueios de token
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(dados)
         });
@@ -99,16 +97,24 @@ async function criarPublicacao(e) {
 async function apagarPublicacao(id) {
     if (!confirm('Tens a certeza de que queres apagar esta publicação?')) return;
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('Faça login antes de apagar uma publicação.');
+        window.location.href = 'login.html';
+        return;
+    }
+
     try {
         const resposta = await fetch(`http://localhost:3000/api/publicacoes/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
         });
 
         const resultado = await resposta.json();
 
         if (resposta.ok) {
             alert(resultado.mensagem);
-            location.reload(); // Recarrega o feed para atualizar a lista
+            await carregarPublicacoes();
         } else {
             alert(resultado.erro || 'Erro ao apagar a publicação.');
         }
@@ -118,20 +124,28 @@ async function apagarPublicacao(id) {
     }
 }
 
-// Função para atualizar publicação (exemplo com prompt rápido ou modal)
+// Função para atualizar publicação
 async function editarPublicacao(id, tituloAtual, precoAtual, descricaoAtual, imagemAtual) {
     const novoTitulo = prompt('Novo título:', tituloAtual);
-    if (novoTitulo === null) return; // Cancelou
+    if (novoTitulo === null) return;
 
     const novoPreco = prompt('Novo preço:', precoAtual);
     const novaDescricao = prompt('Nova descrição:', descricaoAtual);
     const novaImagem = prompt('Nova URL da Imagem:', imagemAtual);
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('Faça login antes de editar uma publicação.');
+        window.location.href = 'login.html';
+        return;
+    }
+
     try {
         const resposta = await fetch(`http://localhost:3000/api/publicacoes/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
                 titulo: novoTitulo,
@@ -145,7 +159,7 @@ async function editarPublicacao(id, tituloAtual, precoAtual, descricaoAtual, ima
 
         if (resposta.ok) {
             alert(resultado.mensagem);
-            location.reload();
+            await carregarPublicacoes();
         } else {
             alert(resultado.erro || 'Erro ao atualizar a publicação.');
         }

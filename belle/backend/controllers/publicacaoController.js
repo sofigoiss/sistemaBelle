@@ -4,7 +4,7 @@ const db = require('../database/conexao');
 const listarPublicacoes = async (req, res) => {
     try {
         const [linhas] = await db.query(`
-            SELECT p.*, u.nome 
+            SELECT p.*, u.nome AS nome_trabalhador
             FROM publicacoes p
             LEFT JOIN usuarios u ON p.usuario_id = u.id
             ORDER BY p.id DESC
@@ -16,7 +16,7 @@ const listarPublicacoes = async (req, res) => {
             const [linhas] = await db.query('SELECT * FROM publicacoes ORDER BY id DESC');
             res.json(linhas);
         } catch (erro2) {
-            res.json([]);
+            res.status(500).json({ erro: 'Erro interno ao carregar publicações.' });
         }
     }
 };
@@ -24,8 +24,17 @@ const listarPublicacoes = async (req, res) => {
 // Criar nova publicação
 const criarPublicacao = async (req, res) => {
     try {
-        const { usuario_id, titulo, preco, imagem_url, descricao } = req.body;
-        const idUsuario = usuario_id || 3; 
+        const { titulo, preco, imagem_url, descricao } = req.body;
+
+        if (!titulo || !String(titulo).trim()) {
+            return res.status(400).json({ erro: 'O título é obrigatório.' });
+        }
+
+        if (req.usuario.tipo_usuario && req.usuario.tipo_usuario !== 'trabalhador') {
+            return res.status(403).json({ erro: 'Apenas trabalhadores podem criar publicações.' });
+        }
+
+        const idUsuario = req.usuario.id;
 
         await db.query(
             'INSERT INTO publicacoes (usuario_id, titulo, preco, imagem_url, descricao) VALUES (?, ?, ?, ?, ?)',
@@ -45,9 +54,22 @@ const atualizarPublicacao = async (req, res) => {
         const { id } = req.params;
         const { titulo, preco, imagem_url, descricao } = req.body;
 
+        if (!titulo || !String(titulo).trim()) {
+            return res.status(400).json({ erro: 'O título é obrigatório.' });
+        }
+
+        const [existentes] = await db.query(
+            'SELECT id FROM publicacoes WHERE id = ? AND usuario_id = ?',
+            [id, req.usuario.id]
+        );
+
+        if (existentes.length === 0) {
+            return res.status(404).json({ erro: 'Publicação não encontrada ou não lhe pertence.' });
+        }
+
         await db.query(
-            'UPDATE publicacoes SET titulo = ?, preco = ?, imagem_url = ?, descricao = ? WHERE id = ?',
-            [titulo, preco || 0, imagem_url || '', descricao || '', id]
+            'UPDATE publicacoes SET titulo = ?, preco = ?, imagem_url = ?, descricao = ? WHERE id = ? AND usuario_id = ?',
+            [titulo.trim(), preco || 0, imagem_url || '', descricao || '', id, req.usuario.id]
         );
 
         res.json({ mensagem: 'Publicação atualizada com sucesso! 🌸' });
@@ -61,7 +83,17 @@ const atualizarPublicacao = async (req, res) => {
 const apagarPublicacao = async (req, res) => {
     try {
         const { id } = req.params;
-        await db.query('DELETE FROM publicacoes WHERE id = ?', [id]);
+
+        const [existentes] = await db.query(
+            'SELECT id FROM publicacoes WHERE id = ? AND usuario_id = ?',
+            [id, req.usuario.id]
+        );
+
+        if (existentes.length === 0) {
+            return res.status(404).json({ erro: 'Publicação não encontrada ou não lhe pertence.' });
+        }
+
+        await db.query('DELETE FROM publicacoes WHERE id = ? AND usuario_id = ?', [id, req.usuario.id]);
         res.json({ mensagem: 'Publicação apagada com sucesso! 🌸' });
     } catch (erro) {
         console.error('Erro ao apagar publicação:', erro);
