@@ -173,7 +173,7 @@
     <div class="header-topo">
         <h1>Sistema Belle 🌸</h1>
         <div class="menu-links">
-            <a href="perfil.html?id=1">Meu Perfil</a>
+            <a id="link-perfil" href="perfil.html">Meu Perfil</a>
         </div>
     </div>
 
@@ -203,9 +203,9 @@
                         
                         card.innerHTML = `
                             <div class="card-header">
-                                <div class="avatar">${pub.nome ? pub.nome.charAt(0).toUpperCase() : 'U'}</div>
+                                <div class="avatar">${pub.nome_trabalhador ? pub.nome_trabalhador.charAt(0).toUpperCase() : 'U'}</div>
                                 <div class="autor-info">
-                                    <h3>${pub.nome || 'Produtor Local'}</h3>
+                                    <h3>${pub.nome_trabalhador || 'Produtor Local'}</h3>
                                     <span>${pub.categoria || 'Artesanal'}</span>
                                 </div>
                             </div>
@@ -283,16 +283,21 @@
 
             if (!texto) return;
 
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Faça login antes de comentar.');
+                window.location.href = 'login.html';
+                return;
+            }
+
             try {
                 const resposta = await fetch(`http://localhost:3000/api/publicacoes/${publicacaoId}/comentarios`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({
-                        texto: texto,
-                        usuario_id: 3 // ID fixo para testes livres
-                    })
+                    body: JSON.stringify({ texto })
                 });
 
                 if (resposta.ok) {
@@ -305,6 +310,12 @@
                 console.error('Erro de conexão:', erro);
                 alert('Erro de conexão com o servidor.');
             }
+        }
+
+        const usuarioGuardado = JSON.parse(localStorage.getItem('usuario') || 'null');
+        const linkPerfil = document.getElementById('link-perfil');
+        if (usuarioGuardado && usuarioGuardado.id && linkPerfil) {
+            linkPerfil.href = `perfil.html?id=${usuarioGuardado.id}`;
         }
 
         carregarFeed();

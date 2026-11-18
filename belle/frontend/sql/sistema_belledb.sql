@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS sistema_belle;
 USE sistema_belle;
 
 -- 1. Criar primeiro a tabela de Utilizadores (com a coluna foto_perfil já integrada)
-CREATE TABLE usuarios (
+CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -19,13 +19,16 @@ VALUES (
     3, 
     'Utilizador Teste', 
     'teste@sistema.com', 
-    '$2b$10$39vF3V43jM7N0Q6L8x16U.uDqG4fJ8y8hK8x8uJ1xJ1xJ1xJ1xJ1G', 
+    '$2b$10$On17CdtNcmMT3xTj/27fQu4rxjU8BXJw/D0J/gjjoeStKiqPlh.RS', 
     'trabalhador'
 )
-ON DUPLICATE KEY UPDATE nome = 'Utilizador Teste';
+ON DUPLICATE KEY UPDATE
+    nome = 'Utilizador Teste',
+    senha = VALUES(senha),
+    tipo_usuario = 'trabalhador';
 
 -- 2. Tabela de Publicações (para os trabalhadores divulgarem comidas, artesanatos, etc.)
-CREATE TABLE publicacoes (
+CREATE TABLE IF NOT EXISTS publicacoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     titulo VARCHAR(100) NOT NULL,
@@ -37,7 +40,7 @@ CREATE TABLE publicacoes (
 );
 
 -- 3. Tabela de Comentários
-CREATE TABLE comentarios (
+CREATE TABLE IF NOT EXISTS comentarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     publicacao_id INT NOT NULL,
     usuario_id INT NOT NULL,

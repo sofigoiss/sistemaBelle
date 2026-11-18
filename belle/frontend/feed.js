@@ -34,7 +34,7 @@ async function carregarPublicacoes() {
                 <p class="preco">R$ ${pub.preco}</p>
                 ${pub.imagem_url ? `<img src="${pub.imagem_url}" alt="${pub.titulo}" style="max-width:100%; border-radius:8px; margin-top:10px;">` : ''}
                 <p style="margin-top: 10px;">${pub.descricao}</p>
-                <small style="color: #666; display: block; margin-top: 10px;">Por: ${pub.nome || 'Utilizador'}</small>
+                <small style="color: #666; display: block; margin-top: 10px;">Por: ${pub.nome_trabalhador || 'Utilizador'}</small>
             `;
             containerFeed.appendChild(card);
         });
@@ -214,16 +214,21 @@ async function enviarComentario(evento, publicacaoId) {
 
     if (!texto) return;
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('Faça login antes de comentar.');
+        window.location.href = 'login.html';
+        return;
+    }
+
     try {
         const resposta = await fetch(`http://localhost:3000/api/publicacoes/${publicacaoId}/comentarios`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
-                texto: texto,
-                usuario_id: 3 // ID predefinido para testes livres
-            })
+            body: JSON.stringify({ texto })
         });
 
         if (resposta.ok) {

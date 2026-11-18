@@ -54,6 +54,10 @@ const atualizarPublicacao = async (req, res) => {
         const { id } = req.params;
         const { titulo, preco, imagem_url, descricao } = req.body;
 
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({ erro: 'ID da publicação inválido.' });
+        }
+
         if (!titulo || !String(titulo).trim()) {
             return res.status(400).json({ erro: 'O título é obrigatório.' });
         }
@@ -83,6 +87,10 @@ const atualizarPublicacao = async (req, res) => {
 const apagarPublicacao = async (req, res) => {
     try {
         const { id } = req.params;
+
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({ erro: 'ID da publicação inválido.' });
+        }
 
         const [existentes] = await db.query(
             'SELECT id FROM publicacoes WHERE id = ? AND usuario_id = ?',
@@ -123,16 +131,24 @@ const listarComentarios = async (req, res) => {
 const criarComentario = async (req, res) => {
     try {
         const { publicacao_id } = req.params;
-        const { texto, usuario_id } = req.body;
-        const idUsuario = usuario_id || 3;
+        const { texto } = req.body;
 
-        if (!texto) {
+        if (!/^\d+$/.test(publicacao_id)) {
+            return res.status(400).json({ erro: 'ID da publicação inválido.' });
+        }
+
+        if (!texto || !String(texto).trim()) {
             return res.status(400).json({ erro: 'O comentário não pode estar vazio.' });
+        }
+
+        const [publicacoes] = await db.query('SELECT id FROM publicacoes WHERE id = ?', [publicacao_id]);
+        if (publicacoes.length === 0) {
+            return res.status(404).json({ erro: 'Publicação não encontrada.' });
         }
 
         await db.query(
             'INSERT INTO comentarios (publicacao_id, usuario_id, texto) VALUES (?, ?, ?)',
-            [publicacao_id, idUsuario, texto]
+            [publicacao_id, req.usuario.id, texto.trim()] 
         );
 
         res.status(201).json({ mensagem: 'Comentário adicionado com sucesso! 🌸' });

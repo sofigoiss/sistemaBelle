@@ -16,8 +16,12 @@ const registrar = async (req, res) => {
             return res.status(400).json({ erro: ' Este email já está a ser utilizado.' });
         }
 
+        const tipoFinal = tipo_usuario || 'consumidor';
+        if (!['consumidor', 'trabalhador'].includes(tipoFinal)) {
+            return res.status(400).json({ erro: 'Tipo de utilizador inválido.' });
+        }
+
         const senhaHash = await bcrypt.hash(senha, 10);
-        const tipoFinal = tipo_usuario || 'cliente';
 
         await db.query(
             'INSERT INTO usuarios (nome, email, senha, tipo_usuario) VALUES (?, ?, ?, ?)',

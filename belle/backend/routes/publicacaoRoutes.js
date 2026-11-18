@@ -11,6 +11,6 @@ router.delete('/:id', verificarToken, publicacaoController.apagarPublicacao);
 
 // Rotas de comentários
 router.get('/:publicacao_id/comentarios', publicacaoController.listarComentarios);
-router.post('/:publicacao_id/comentarios', publicacaoController.criarComentario);
+router.post('/:publicacao_id/comentarios', verificarToken, publicacaoController.criarComentario);
 
 module.exports = router;
